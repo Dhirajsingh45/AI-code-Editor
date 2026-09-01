@@ -1,0 +1,20 @@
+{
+  "name": "ai-code-editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dhirajsingh45/AI-code-Editor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dhirajsingh45/AI-code-Editor/issues"
+  },
+  "homepage": "https://github.com/Dhirajsingh45/AI-code-Editor#readme"
+}
