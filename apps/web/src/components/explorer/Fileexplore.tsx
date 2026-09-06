@@ -3,49 +3,91 @@ import {
   ChevronRight,
   FileCode2,
   FileJson,
+  FileText,
   Folder,
   FolderOpen,
+  Plus,
+  Check,
+  X,
 } from "lucide-react";
+
 import { useState } from "react";
 
 interface FileExplorerProps {
+  files: string[];
   selectedFile: string;
   onFileSelect: (fileName: string) => void;
+  onCreateFile: (fileName: string) => void;
 }
 
 function FileExplorer({
+  files,
   selectedFile,
   onFileSelect,
+  onCreateFile,
 }: FileExplorerProps) {
   const [srcOpen, setSrcOpen] = useState(true);
+  const [creatingFile, setCreatingFile] = useState(false);
+  const [newFileName, setNewFileName] = useState("");
 
-  const files = [
-    {
-      name: "App.tsx",
-      icon: <FileCode2 size={15} />,
-    },
-    {
-      name: "main.tsx",
-      icon: <FileCode2 size={15} />,
-    },
-    {
-      name: "package.json",
-      icon: <FileJson size={15} />,
-    },
-  ];
+  const getFileIcon = (fileName: string) => {
+    if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) {
+      return <FileCode2 size={15} />;
+    }
+
+    if (fileName.endsWith(".json")) {
+      return <FileJson size={15} />;
+    }
+
+    return <FileText size={15} />;
+  };
+
+  const handleStartCreate = () => {
+    setCreatingFile(true);
+    setNewFileName("");
+  };
+
+  const handleCancelCreate = () => {
+    setCreatingFile(false);
+    setNewFileName("");
+  };
+
+  const handleConfirmCreate = () => {
+    const name = newFileName.trim();
+
+    if (!name) {
+      return;
+    }
+
+    onCreateFile(name);
+
+    setCreatingFile(false);
+    setNewFileName("");
+  };
 
   return (
     <aside className="explorer">
       <div className="panel-title">
-        EXPLORER
+        <span>EXPLORER</span>
+
+        <button
+          type="button"
+          className="explorer-add-button"
+          onClick={handleStartCreate}
+          title="New File"
+        >
+          <Plus size={16} />
+        </button>
       </div>
 
       <div className="project-tree">
+        {/* Project */}
         <div className="tree-item root">
           <FolderOpen size={16} />
           <span>my-project</span>
         </div>
 
+        {/* SRC */}
         <div
           className="tree-item"
           onClick={() => setSrcOpen(!srcOpen)}
@@ -67,18 +109,61 @@ function FileExplorer({
 
         {srcOpen && (
           <div className="nested">
-            {files.map((file) => (
+
+            {/* New File Input */}
+            {creatingFile && (
+              <div className="new-file-row">
+                <FileText size={15} />
+
+                <input
+                  autoFocus
+                  value={newFileName}
+                  onChange={(event) =>
+                    setNewFileName(event.target.value)
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      handleConfirmCreate();
+                    }
+
+                    if (event.key === "Escape") {
+                      handleCancelCreate();
+                    }
+                  }}
+                  placeholder="filename.tsx"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleConfirmCreate}
+                  title="Create"
+                >
+                  <Check size={14} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCancelCreate}
+                  title="Cancel"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+
+            {/* Existing Files */}
+            {files.map((fileName) => (
               <div
-                key={file.name}
+                key={fileName}
                 className={`tree-item ${
-                  selectedFile === file.name
+                  selectedFile === fileName
                     ? "selected"
                     : ""
                 }`}
-                onClick={() => onFileSelect(file.name)}
+                onClick={() => onFileSelect(fileName)}
               >
-                {file.icon}
-                <span>{file.name}</span>
+                {getFileIcon(fileName)}
+                <span>{fileName}</span>
               </div>
             ))}
           </div>
