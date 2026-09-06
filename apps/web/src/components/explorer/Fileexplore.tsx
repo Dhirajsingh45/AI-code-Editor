@@ -9,6 +9,8 @@ import {
   Plus,
   Check,
   X,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 import { useState } from "react";
@@ -18,6 +20,11 @@ interface FileExplorerProps {
   selectedFile: string;
   onFileSelect: (fileName: string) => void;
   onCreateFile: (fileName: string) => void;
+  onRenameFile: (
+    oldName: string,
+    newName: string
+  ) => void;
+  onDeleteFile: (fileName: string) => void;
 }
 
 function FileExplorer({
@@ -25,13 +32,28 @@ function FileExplorer({
   selectedFile,
   onFileSelect,
   onCreateFile,
+  onRenameFile,
+  onDeleteFile,
 }: FileExplorerProps) {
   const [srcOpen, setSrcOpen] = useState(true);
-  const [creatingFile, setCreatingFile] = useState(false);
-  const [newFileName, setNewFileName] = useState("");
+
+  const [creatingFile, setCreatingFile] =
+    useState(false);
+
+  const [newFileName, setNewFileName] =
+    useState("");
+
+  const [renamingFile, setRenamingFile] =
+    useState<string | null>(null);
+
+  const [renameValue, setRenameValue] =
+    useState("");
 
   const getFileIcon = (fileName: string) => {
-    if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) {
+    if (
+      fileName.endsWith(".tsx") ||
+      fileName.endsWith(".ts")
+    ) {
       return <FileCode2 size={15} />;
     }
 
@@ -65,6 +87,33 @@ function FileExplorer({
     setNewFileName("");
   };
 
+  const handleStartRename = (fileName: string) => {
+    setRenamingFile(fileName);
+    setRenameValue(fileName);
+  };
+
+  const handleCancelRename = () => {
+    setRenamingFile(null);
+    setRenameValue("");
+  };
+
+  const handleConfirmRename = () => {
+    if (!renamingFile) {
+      return;
+    }
+
+    const newName = renameValue.trim();
+
+    if (!newName) {
+      return;
+    }
+
+    onRenameFile(renamingFile, newName);
+
+    setRenamingFile(null);
+    setRenameValue("");
+  };
+
   return (
     <aside className="explorer">
       <div className="panel-title">
@@ -81,13 +130,11 @@ function FileExplorer({
       </div>
 
       <div className="project-tree">
-        {/* Project */}
         <div className="tree-item root">
           <FolderOpen size={16} />
           <span>my-project</span>
         </div>
 
-        {/* SRC */}
         <div
           className="tree-item"
           onClick={() => setSrcOpen(!srcOpen)}
@@ -109,8 +156,6 @@ function FileExplorer({
 
         {srcOpen && (
           <div className="nested">
-
-            {/* New File Input */}
             {creatingFile && (
               <div className="new-file-row">
                 <FileText size={15} />
@@ -119,7 +164,9 @@ function FileExplorer({
                   autoFocus
                   value={newFileName}
                   onChange={(event) =>
-                    setNewFileName(event.target.value)
+                    setNewFileName(
+                      event.target.value
+                    )
                   }
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
@@ -151,19 +198,100 @@ function FileExplorer({
               </div>
             )}
 
-            {/* Existing Files */}
             {files.map((fileName) => (
               <div
                 key={fileName}
-                className={`tree-item ${
+                className={`tree-item file-item ${
                   selectedFile === fileName
                     ? "selected"
                     : ""
                 }`}
-                onClick={() => onFileSelect(fileName)}
+                onClick={() =>
+                  onFileSelect(fileName)
+                }
               >
-                {getFileIcon(fileName)}
-                <span>{fileName}</span>
+                {renamingFile === fileName ? (
+                  <>
+                    {getFileIcon(fileName)}
+
+                    <input
+                      autoFocus
+                      className="rename-input"
+                      value={renameValue}
+                      onChange={(event) =>
+                        setRenameValue(
+                          event.target.value
+                        )
+                      }
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          handleConfirmRename();
+                        }
+
+                        if (event.key === "Escape") {
+                          handleCancelRename();
+                        }
+                      }}
+                      onClick={(event) =>
+                        event.stopPropagation()
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleConfirmRename();
+                      }}
+                      title="Save"
+                    >
+                      <Check size={14} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleCancelRename();
+                      }}
+                      title="Cancel"
+                    >
+                      <X size={14} />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {getFileIcon(fileName)}
+
+                    <span className="file-name">
+                      {fileName}
+                    </span>
+
+                    <div className="file-actions">
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleStartRename(fileName);
+                        }}
+                        title="Rename"
+                      >
+                        <Pencil size={13} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onDeleteFile(fileName);
+                        }}
+                        title="Delete"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>

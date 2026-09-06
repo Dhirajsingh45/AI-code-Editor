@@ -38,8 +38,7 @@ createRoot(document.getElementById("root")!).render(
 };
 
 function IDELayout() {
-  const [selectedFile, setSelectedFile] =
-    useState("App.tsx");
+  const [selectedFile, setSelectedFile] = useState("App.tsx");
 
   const [files, setFiles] = useState<Record<string, string>>(() => {
     const savedFiles = localStorage.getItem("codeforge-files");
@@ -83,6 +82,78 @@ function IDELayout() {
     setSelectedFile(fileName);
   };
 
+  const handleRenameFile = (
+    oldName: string,
+    newName: string
+  ) => {
+    const trimmedName = newName.trim();
+
+    if (!trimmedName) {
+      return;
+    }
+
+    if (
+      trimmedName !== oldName &&
+      trimmedName in files
+    ) {
+      alert("A file with this name already exists.");
+      return;
+    }
+
+    setFiles((previousFiles) => {
+      const updatedFiles: Record<string, string> = {};
+
+      Object.entries(previousFiles).forEach(
+        ([fileName, content]) => {
+          if (fileName === oldName) {
+            updatedFiles[trimmedName] = content;
+          } else {
+            updatedFiles[fileName] = content;
+          }
+        }
+      );
+
+      return updatedFiles;
+    });
+
+    if (selectedFile === oldName) {
+      setSelectedFile(trimmedName);
+    }
+  };
+
+  const handleDeleteFile = (fileName: string) => {
+    const fileNames = Object.keys(files);
+
+    if (fileNames.length === 1) {
+      alert("You cannot delete the last file.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete "${fileName}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setFiles((previousFiles) => {
+      const updatedFiles = { ...previousFiles };
+
+      delete updatedFiles[fileName];
+
+      return updatedFiles;
+    });
+
+    if (selectedFile === fileName) {
+      const remainingFiles = fileNames.filter(
+        (name) => name !== fileName
+      );
+
+      setSelectedFile(remainingFiles[0]);
+    }
+  };
+
   return (
     <div className="ide">
       <Header />
@@ -93,6 +164,8 @@ function IDELayout() {
           selectedFile={selectedFile}
           onFileSelect={setSelectedFile}
           onCreateFile={handleCreateFile}
+          onRenameFile={handleRenameFile}
+          onDeleteFile={handleDeleteFile}
         />
 
         <main className="workspace">
