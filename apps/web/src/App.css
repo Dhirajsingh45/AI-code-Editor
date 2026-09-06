@@ -366,3 +366,52 @@ button {
   background: #30363d;
   color: #ffffff;
 }
+.file-item {
+  position: relative;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-actions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.file-item:hover .file-actions {
+  display: flex;
+}
+
+.file-actions button,
+.rename-input + button,
+.rename-input + button + button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.file-actions button:hover {
+  color: white;
+}
+
+.rename-input {
+  flex: 1;
+  min-width: 0;
+  background: #1e1e1e;
+  color: white;
+  border: 1px solid #007acc;
+  outline: none;
+  padding: 2px 4px;
+  font-size: 13px;
+}
