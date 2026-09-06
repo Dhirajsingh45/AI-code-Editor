@@ -12,12 +12,39 @@ function CodeEditor({
   onChange,
 }: CodeEditorProps) {
   const getLanguage = (fileName: string) => {
-    if (fileName.endsWith(".tsx")) return "typescriptreact";
-    if (fileName.endsWith(".ts")) return "typescript";
-    if (fileName.endsWith(".jsx")) return "javascript";
-    if (fileName.endsWith(".js")) return "javascript";
-    if (fileName.endsWith(".json")) return "json";
-    if (fileName.endsWith(".css")) return "css";
+    const extension = fileName.toLowerCase();
+
+    if (extension.endsWith(".tsx")) return "typescriptreact";
+    if (extension.endsWith(".ts")) return "typescript";
+
+    if (extension.endsWith(".jsx")) return "javascript";
+    if (extension.endsWith(".js")) return "javascript";
+
+    if (extension.endsWith(".html")) return "html";
+    if (extension.endsWith(".css")) return "css";
+    if (extension.endsWith(".scss")) return "scss";
+
+    if (extension.endsWith(".json")) return "json";
+
+    if (extension.endsWith(".py")) return "python";
+    if (extension.endsWith(".java")) return "java";
+    if (extension.endsWith(".c")) return "c";
+    if (extension.endsWith(".cpp")) return "cpp";
+
+    if (extension.endsWith(".sql")) return "sql";
+
+    if (extension.endsWith(".xml")) return "xml";
+
+    if (
+      extension.endsWith(".yaml") ||
+      extension.endsWith(".yml")
+    ) {
+      return "yaml";
+    }
+
+    if (extension.endsWith(".md")) return "markdown";
+
+    if (extension.endsWith(".sh")) return "shell";
 
     return "plaintext";
   };

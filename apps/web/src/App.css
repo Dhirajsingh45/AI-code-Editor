@@ -310,3 +310,59 @@ button {
 .tree-item.selected:hover {
   background: #388bfd;
 }
+/* .panel-title {
+  justify-content: space-between;
+}
+
+.explorer-add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #8b949e;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.explorer-add-button:hover {
+  background: #30363d;
+  color: #ffffff;
+} */
+.new-file-row {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px;
+  color: #8b949e;
+}
+
+.new-file-row input {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  border: 1px solid #58a6ff;
+  border-radius: 4px;
+  outline: none;
+  padding: 2px 6px;
+  background: #0d1117;
+  color: #f0f6fc;
+  font-size: 12px;
+}
+
+.new-file-row button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #8b949e;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.new-file-row button:hover {
+  background: #30363d;
+  color: #ffffff;
+}
